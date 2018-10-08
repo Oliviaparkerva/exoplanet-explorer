@@ -31,28 +31,31 @@ Instructions:
    * XHR wrapped in a promise.
    * @param  {String} url - The URL to fetch.
    * @return {Promise}    - A Promise that resolves when the XHR succeeds and fails otherwise.
+   https://is.gd/MadvXm -
    */
   function get(url) {
-    /*
-    This code needs to get wrapped in a Promise!
-     */
-    var req = new XMLHttpRequest();
-    req.open('GET', url);
-    req.onload = function() {
-      if (req.status === 200) {
-        // It worked!
-        // You'll want to resolve with the data from req.response
-      } else {
-        // It failed :(
-        // Be nice and reject with req.statusText
-      }
-    };
-    req.onerror = function() {
-      // It failed :(
-      // Pass a 'Network Error' to reject
-    };
-    req.send();
-  }
+    return new Promise(function(resolve, reject){
+      var req = new XMLHttpRequest();//create XHR object
+      req.open('GET', url);//open a URL
+      req.onload = function(){ //if it loads run this
+        if (req.status === 200) {
+          /* 200 signifies success! Resolve with the data from req.response*/
+          resolve(req.response);
+        } else {
+          // It failed reject with req.statusText
+          reject(req.statusText);
+        }
+      };
+      req.onerror = function() {//if request errors out this runs
+        // It failed :( Pass a 'Network Error' to reject
+        // reject(reason for rejection('Network Error'))
+        //https://is.gd/LHM8lI
+        //https://is.gd/SqbVng
+        reject(Error('Network Error'));
+      };
+      req.send();//send the request
+  });
+  };
 
   window.addEventListener('WebComponentsReady', function() {
     home = document.querySelector('section[data-route="home"]');
@@ -61,6 +64,13 @@ Instructions:
     You'll need to add a .then and a .catch. Pass the response to addSearchHeader on resolve or
     pass 'unknown' to addSearchHeader if it rejects.
      */
-    // get('../data/earth-like-results.json')
+    get('../data/earth-lik-results.json')
+    .then(function(response){
+      addSearchHeader(response);
+    })
+    .catch(function(error){
+      addSearchHeader('unknown');
+      console.log(error);
+    });
   });
 })(document);

@@ -23,8 +23,7 @@ Instructions:
     home.innerHTML = '<h2 class="page-title">query: ' + query + '</h2>';
   }
 
-  /**
-   * Helper function to create a planet thumbnail.
+  /*Helper function to create a planet thumbnail.
    * @param  {Object} data - The raw data describing the planet.
    */
   function createPlanetThumb(data) {
@@ -35,8 +34,7 @@ Instructions:
     home.appendChild(pT);
   }
 
-  /**
-   * XHR wrapped in a promise
+  /** XHR wrapped in a promise
    * @param  {String} url - The URL to fetch.
    * @return {Promise}    - A Promise that resolves when the XHR succeeds and fails otherwise.
    */
@@ -46,8 +44,7 @@ Instructions:
     });
   }
 
-  /**
-   * Performs an XHR for a JSON and returns a parsed JSON response.
+  /*Performs an XHR for a JSON and returns a parsed JSON response.
    * @param  {String} url - The JSON URL to fetch.
    * @return {Promise}    - A promise that passes the parsed JSON response.
    */
@@ -59,11 +56,21 @@ Instructions:
 
   window.addEventListener('WebComponentsReady', function() {
     home = document.querySelector('section[data-route="home"]');
-    /*
-    Uncomment the next line and start here when you're ready to add the first thumbnail!
-
-    Your code goes here!
-     */
-    // getJSON('../data/earth-like-results.json')
+    /*Uncomment the next line and start here when you're ready to add the first thumbnail!
+      Get the planet data .then add search header
+      Return the first planet so it can be then'd in the createPlanetThumb chain*/
+    getJSON('../data/earth-like-results.json')
+    .then((response)=>{
+      addSearchHeader(response.query);      
+      return getJSON(response.results[0]);
+    })
+    .catch(function(){
+      throw Error('Search Header Error')
+    })
+    .then(createPlanetThumb)
+    .catch((e)=>{
+      addSearchHeader('unknown');
+      console.log(e);
+    })
   });
 })(document);
